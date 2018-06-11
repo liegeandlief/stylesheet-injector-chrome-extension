@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Stylesheet injector</title>
+
+    <style>
+    input[type="checkbox"] {
+      display: block;
+      margin: 3px 0 15px;
+    }
+
+    input[type="text"] {
+      width: 300px;
+      display: block;
+      margin: 3px 0 15px;
+    }
+    </style>
+  </head>
+  <body>
+
+    <h1>Stylesheet injector</h1>
+
+    <label for="matchURL">Inject stylesheet if URL matches this regular expression:</label>
+    <input id="matchURL" type="text" />
+
+    <label for="stylesheetURL">Stylesheet URL:</label>
+    <input id="stylesheetURL" type="text" />
+
+    <label for="enabled">Enabled:</label>
+    <input id="enabled" type="checkbox" />
+
+    <script src="popup.js"></script>
+
+  </body>
+</html>

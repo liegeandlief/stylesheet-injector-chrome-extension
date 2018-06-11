@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+
+  "name": "Stylesheet injector",
+  "description": "Inject a stylesheet into a page if the page's URL matches a regular expression.",
+  "version": "1.0",
+
+  "permissions": [
+    "storage", "<all_urls>"
+  ],
+
+  "browser_action": {
+    "default_popup": "popup.html"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["injector.js"]
+    }
+  ]
+}
