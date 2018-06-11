@@ -6,6 +6,10 @@ const onMatchURLChange = event => {
   chrome.storage.sync.set({'stylesheetInjetor_matchURL': event.target.value})
 }
 
+const onLocationSelectorChange = event => {
+  chrome.storage.sync.set({'stylesheetInjetor_locationSelector': event.target.value})
+}
+
 const onEnabledChange = event => {
   chrome.storage.sync.set({'stylesheetInjetor_enabled': event.target.checked})
 }
@@ -32,6 +36,17 @@ document.addEventListener('DOMContentLoaded', () => {
   })
 
   matchURLInput.onchange = onMatchURLChange
+
+  // Set initial location selector value and add event handler
+  const locationSelectorInput = document.getElementById('locationSelector')
+
+  chrome.storage.sync.get(['stylesheetInjetor_locationSelector'], result => {
+    if (typeof result.stylesheetInjetor_locationSelector !== 'undefined') {
+      locationSelectorInput.value = result.stylesheetInjetor_locationSelector
+    }
+  })
+
+  locationSelectorInput.onchange = onLocationSelectorChange
 
   // Set initial enabled value and add event handler
   const enabledInput = document.getElementById('enabled')

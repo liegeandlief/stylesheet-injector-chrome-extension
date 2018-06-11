@@ -1,8 +1,8 @@
-let currentEnabled, currentStylesheetURL, currentMatchURL
+let currentEnabled, currentStylesheetURL, currentMatchURL, currentLocationSelector
 
 setInterval(() => {
   try {
-    let enabled, stylesheetURL, matchURL, matchURLRegex
+    let enabled, stylesheetURL, matchURL, matchURLRegex, locationSelector
 
     // Get and set enabled status
     chrome.storage.sync.get(['stylesheetInjetor_enabled'], result => {
@@ -23,12 +23,17 @@ setInterval(() => {
             matchURLRegex = new RegExp(matchURL, 'g')
           }
 
-          // If stylesheet injection is enabled and there is a stylesheet URL and a match URL and the current URL matches the match URL then inject the stylesheet, otherwise remove the injected stylesheet
-          if (enabled && stylesheetURL && matchURL && window.location.href.match(matchURLRegex)) {
-            injectStylesheet(enabled, stylesheetURL, matchURL)
-          } else {
-            removeInjectedStylesheet()
-          }
+          // Get and set location selector
+          chrome.storage.sync.get(['stylesheetInjetor_locationSelector'], result => {
+            locationSelector = result.stylesheetInjetor_locationSelector
+
+            // If stylesheet injection is enabled and there is a stylesheet URL and a match URL and the current URL matches the match URL then inject the stylesheet, otherwise remove the injected stylesheet
+            if (enabled && stylesheetURL && matchURL && window.location.href.match(matchURLRegex)) {
+              injectStylesheet(enabled, stylesheetURL, matchURL, locationSelector)
+            } else {
+              removeInjectedStylesheet()
+            }
+          })
         })
       })
     })
@@ -47,16 +52,18 @@ function removeInjectedStylesheet () {
   currentEnabled = null
   currentStylesheetURL = null
   currentMatchURL = null
+  currentLocationSelector = null
 }
 
-function injectStylesheet (enabled, stylesheetURL, matchURL) {
+function injectStylesheet (enabled, stylesheetURL, matchURL, locationSelector) {
   // Inject stylesheet and add warning if the passed in settings are not the same as the current settings in place
-  if (enabled !== currentEnabled || stylesheetURL !== currentStylesheetURL || matchURL !== currentMatchURL) {
+  if (enabled !== currentEnabled || stylesheetURL !== currentStylesheetURL || matchURL !== currentMatchURL || locationSelector !== currentLocationSelector) {
     removeInjectedStylesheet()
 
     currentEnabled = enabled
     currentStylesheetURL = stylesheetURL
     currentMatchURL = matchURL
+    currentLocationSelector = locationSelector
 
     const body = document.getElementsByTagName('body')[0]
 
@@ -80,6 +87,15 @@ function injectStylesheet (enabled, stylesheetURL, matchURL) {
     link.id = 'stylesheetInjetor_linkTag'
     link.rel = 'stylesheet'
     link.href = stylesheetURL
-    body.appendChild(link)
+
+    if (typeof locationSelector !== 'undefined' && locationSelector.trim().length && document.querySelector(locationSelector) !== null) {
+      insertAfter(link, document.querySelector(locationSelector))
+    } else {
+      body.appendChild(link)
+    }
   }
+}
+
+function insertAfter (newNode, referenceNode) {
+  referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling)
 }
