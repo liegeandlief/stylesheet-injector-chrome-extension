@@ -3,7 +3,7 @@
 
   "name": "Stylesheet injector",
   "description": "Inject a stylesheet into a page if the page's URL matches a regular expression.",
-  "version": "1.0",
+  "version": "1.1",
 
   "permissions": [
     "storage", "<all_urls>"
